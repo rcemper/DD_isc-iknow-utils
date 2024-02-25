@@ -1,53 +1,7 @@
-![Repo-GitHub](https://img.shields.io/badge/dynamic/xml?color=blue&label=IPM%20version&version&prefix=v&query=%2F%2FVersion&url=https%3A%2F%2Fraw.githubusercontent.com%2Fbdeboe%2Fisc-iknow-utils%2Fmain%2Fmodule.xml)
-
-
-# iKnow Utilities
-
-This repository bundles a few reusable IRIS NLP utilities for common scenarios. You can easily install the bundle using [IPM](https://github.com/intersystems/ipm):
-
-```ObjectScript
-USER> zpm
-
-zpm:USER> install iknow-utils
-```
-
-Alternatively, use `$SYSTEM.OBJ.LoadDir()` passing in the path where you downloaded this repository.
-
-All classes are in a `bdb.iKnow` package to avoid conflicting with existing namespace contents and provided without any warranty. Feel free to report issues through the [GitHub repo](https://github.com/bdeboe/isc-iknow-utils/issues).
-
-For a sample code bundle accessing the iKnow APIs directly from your Python code, please check this related [Github repo](https://github.com/bdeboe/isc-iknow-irispy)
-
-
-## Converters
-
-`bdb.iKnow.Converters.SemiStructured` is a simple `%iKnow.Source.Converter` implementation that tries to prevent common key-value style elements from messing up iKnow output. For example:
-
-```text
-MRN: 12345
-HISTORY OF PRESENT ILLNESS: Patient reported wobbly toes in an earlier encounter, for which close
-followup was recommended. Wobbling subsided after 3w of intense inactivity.
-  
-BP: 123/mmHg
-LS: 456
-KV: 78xyz
-TREATMENT: Patient will continue to watch Netflix 14h pd.
-```
-
-iKnow expects natural language text and does not consider single line breaks to mean the end of a real sentence. Therefore, when passing the above text verbatim to the iKnow engine, you'll get those structured `BP: 123/mmHg`, `LS: 456`, etc elements concatenated to one another as if it were a sentence.
-
-The `bdb.iKnow.Converters.SemiStructured` class can be used in a `<converter ... />` tag in your domain definition to sneak a double line break in right before such keys so they are not appended to the previous line. Note that the implementation is somewhat cautious in only adding a line break _before_ the keys and only getting triggered by all-uppercase keys to limit false positives that might mess up genuine use of colons in natural language sentences. This is a sample after all and easy to adapt to your needs.
-
-As a bonus, this Converter can also pick up key values as metadata, by supplying a list of keys as the converter parameter, as shown in the example below:
-
-```ObjectScript
-USER> set converted = ##class(bdb.iKnow.Converters.SemiStructured).TestFull(str,$lb("MRN,KV,LS"),.meta)
-
-USER> zwrite meta
-meta("KV")="78xyz"
-meta("LS")=456
-meta("MRN")=12345
-```
-## DOCKER Support
+# # Docker_Demo: iknow-utils
+The OEX package just uses a modest IRIS instance in Docker     
+It merges IPM package of MDX2JSON with some demo data    
+It is built using the small [Mini-Docker-Template](https://github.com/r-cemper/mini-docker) 
 ### Prerequisites   
 Make sure you have [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [Docker desktop](https://www.docker.com/products/docker-desktop) installed.    
 ### Installation    
@@ -68,3 +22,6 @@ or using **WebTerminal**
 ```
 http://localhost:42773/terminal/
 ```
+### How to use it
+This presents OEX package [iknow-utils](https://openexchange.intersystems.com/package/iknow-utils) using the actual IPM module    
+All user documentation is found there in the [original repo](https://github.com/bdeboe/isc-iknow-utils/blob/main/README.md)  
